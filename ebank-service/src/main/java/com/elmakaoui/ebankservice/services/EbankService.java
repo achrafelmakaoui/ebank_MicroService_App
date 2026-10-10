@@ -1,6 +1,7 @@
 package com.elmakaoui.ebankservice.services;
 
 import com.elmakaoui.ebankservice.entities.BankAccount;
+import com.elmakaoui.ebankservice.feign.CustomerRestClient;
 import com.elmakaoui.ebankservice.repository.BankAccountRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +12,11 @@ import java.util.UUID;
 @Service
 public class EbankService {
     private BankAccountRepository accountRepository;
+    private CustomerRestClient customerRestClient;
 
-    public EbankService(BankAccountRepository accountRepository) {
+    public EbankService(BankAccountRepository accountRepository, CustomerRestClient customerRestClient) {
         this.accountRepository = accountRepository;
+        this.customerRestClient = customerRestClient;
     }
 
     public List<BankAccount> getAllBankAccounts(){
@@ -21,7 +24,9 @@ public class EbankService {
     }
 
     public BankAccount getBankAccountById(String id){
-        return accountRepository.findById(id).orElseThrow(()-> new RuntimeException("Bank Account Not Fund"));
+        BankAccount bankAccount = accountRepository.findById(id).orElseThrow(()-> new RuntimeException("Bank Account Not Fund"));
+        bankAccount.setCustomer(customerRestClient.getCustomerById(bankAccount.getCustomerId()));
+        return bankAccount;
     }
 
     public BankAccount save(BankAccount bankAccount){
