@@ -2,6 +2,7 @@ package com.elmakaoui.ebankservice.services;
 
 import com.elmakaoui.ebankservice.entities.BankAccount;
 import com.elmakaoui.ebankservice.feign.CustomerRestClient;
+import com.elmakaoui.ebankservice.model.Customer;
 import com.elmakaoui.ebankservice.repository.BankAccountRepository;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +31,14 @@ public class EbankService {
     }
 
     public BankAccount save(BankAccount bankAccount){
-        bankAccount.setId(UUID.randomUUID().toString());
-        bankAccount.setCreatedAt(new Date());
-        return accountRepository.save(bankAccount);
+        try{
+            Customer customer = customerRestClient.getCustomerById(bankAccount.getCustomerId());
+            bankAccount.setId(UUID.randomUUID().toString());
+            bankAccount.setCreatedAt(new Date());
+            return accountRepository.save(bankAccount);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }
 
