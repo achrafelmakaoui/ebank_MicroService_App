@@ -1,6 +1,7 @@
 package com.elmakaoui.ebankbot.controllers;
 
 import com.elmakaoui.ebankbot.agents.EbankAIAgent;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,6 @@ public class EbankChatBotController {
     public String chat(
             @RequestParam(name = "query", defaultValue = "Bonjour") String query,
             @RequestParam(name = "conversationId", defaultValue = "default") String conversationId) {
-        return ebankAIAgent.chat(query, conversationId);
+        return ebankAIAgent.chat(new Prompt(query), conversationId);
     }
 }
